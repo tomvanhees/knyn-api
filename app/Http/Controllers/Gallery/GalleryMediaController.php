@@ -12,12 +12,8 @@ class GalleryMediaController extends Controller
 {
     public function store(Request $request,$gallery_id, GalleryRepository $galleryRepository)
     {
+       $media = $galleryRepository->addMediaFiles($request->file("image"), $gallery_id);
 
-        Log::debug($request->file("image"));
-
-       $media = $galleryRepository->addMediaFiles($request->file("image"), $gallery_id, Auth::id());
-        Log::debug('controller');
-       Log::debug($media);
         return response()->json($media,200);
     }
 }
