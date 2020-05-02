@@ -50,25 +50,37 @@ class GalleryController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param int $id
-     * @return \Illuminate\Http\Response
+     * @param $gallery_id
+     * @param GalleryRepository $galleryRepository
+     * @return JsonResponse
      */
-    public function show($id)
+    public function show($gallery_id, GalleryRepository $galleryRepository)
     {
-        //
+            $gallery = $galleryRepository->show(Auth::id(), $gallery_id);
+
+            return response()->json($gallery, 200);
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param \Illuminate\Http\Request $request
-     * @param int $id
-     * @return \Illuminate\Http\Response
+     * @param $gallery_id
+     * @param GalleryRepository $galleryRepository
+     * @return void
      */
-    public function update(Request $request,$id)
+    public function update(Request $request, $gallery_id, GalleryRepository $galleryRepository)
     {
         $validator = Validator::make($request->toArray(), ["name" => "required|max:191"]);
 
+
+        if ($validator->fails()){
+            return ;
+        }
+
+        $galleryRepository->update($validator->validated(), $gallery_id);
+
+        return response()->json([],200);
     }
 
     /**

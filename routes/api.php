@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Gallery\GalleryController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Gallery\GalleryMediaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,6 +28,10 @@ Route::prefix("v1")->group(function () {
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::get("/gallery",[GalleryController::class,"index"]);
-        Route::post("/gallery/store",[GalleryController::class,"store"]);
+        Route::post("/gallery",[GalleryController::class,"store"]);
+        Route::get("/gallery/{id}",[GalleryController::class,"show"]);
+        Route::patch("/gallery/{id}",[GalleryController::class,"update"]);
+
+        Route::patch("/gallery/{id}/media",[GalleryMediaController::class,"store"]);
     });
 });
