@@ -5,6 +5,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Gallery\GalleryController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Gallery\GalleryMediaController;
+use App\Http\Controllers\Product\ProductBrandController;
+use App\Http\Controllers\Product\ProductCategoryController;
+use App\Http\Controllers\Product\ProductController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,13 +30,25 @@ Route::prefix("v1")->group(function () {
     Route::post("/user/store",[RegisterController::class,"register"]);
 
     Route::middleware('auth:sanctum')->group(function () {
+
+        Route::patch("/gallery/media",[GalleryMediaController::class,"store"]);
+        Route::delete("/gallery/media/{id}",[GalleryMediaController::class,"destroy"]);
+
         Route::get("/gallery",[GalleryController::class,"index"]);
         Route::post("/gallery",[GalleryController::class,"store"]);
         Route::get("/gallery/{id}",[GalleryController::class,"show"]);
         Route::patch("/gallery/{id}",[GalleryController::class,"update"]);
 
-        Route::patch("/gallery/media",[GalleryMediaController::class,"store"]);
-        Route::delete("/gallery/media/{id}", [GalleryMediaController::class, "destroy"]);
+
+        Route::get("/product/brands",[ProductBrandController::class,"index"]);
+        Route::post("/product/brands",[ProductBrandController::class,"store"]);
+
+        Route::get("/product/categories",[ProductCategoryController::class,"index"]);
+        Route::post("/product/categories",[ProductCategoryController::class,"store"]);
+
+
+        Route::get("/product",[ProductController::class,"index"]);
+        Route::post("/product",[ProductController::class,"store"]);
 
     });
 });

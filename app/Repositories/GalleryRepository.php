@@ -67,7 +67,7 @@ class GalleryRepository
         return;
     }
 
-    public function addMediaFiles(array $files,$gallery_id)
+    public function addMediaFiles(array $files, $gallery_id)
     {
         $gallery = Gallery::find($gallery_id);
 
