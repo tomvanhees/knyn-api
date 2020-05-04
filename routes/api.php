@@ -32,6 +32,8 @@ Route::prefix("v1")->group(function () {
         Route::get("/gallery/{id}",[GalleryController::class,"show"]);
         Route::patch("/gallery/{id}",[GalleryController::class,"update"]);
 
-        Route::patch("/gallery/{id}/media",[GalleryMediaController::class,"store"]);
+        Route::patch("/gallery/media",[GalleryMediaController::class,"store"]);
+        Route::delete("/gallery/media/{id}", [GalleryMediaController::class, "destroy"]);
+
     });
 });

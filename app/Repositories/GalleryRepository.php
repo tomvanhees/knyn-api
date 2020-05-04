@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 use App\Http\Resources\Gallery\GalleryResource;
 use App\Http\Resources\Media\MediaResource;
 use Illuminate\Support\Facades\Log;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 
 class GalleryRepository
@@ -19,9 +20,9 @@ class GalleryRepository
 
         $galleries = Gallery::where("user_id",$user_id)->get();
 
-       $galleriesResource = $galleries->map(function ($item, $key){
-           return (new GalleryResource($item))->toArray();
-       });
+        $galleriesResource = $galleries->map(function ($item,$key) {
+            return (new GalleryResource($item))->toArray();
+        });
 
         $galleriesResource = $galleriesResource->all();
 
@@ -74,11 +75,18 @@ class GalleryRepository
             $gallery->addMedia($file)->toMediaCollection();
         }
 
-        $mediaResource   = (new MediaResource($gallery->getMedia()))->toArray();
+        $mediaResource = (new MediaResource($gallery->getMedia()))->toArray();
 
         return [
             "media" => $mediaResource
         ];
+    }
+
+    public function deleteMedia($id)
+    {
+        Media::find($id)->delete();
+
+        return;
     }
 
 

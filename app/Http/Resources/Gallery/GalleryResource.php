@@ -13,6 +13,7 @@ class GalleryResource extends AbstractResource
     {
         $this->collection["id"]   = $this->data->id;
         $this->collection["name"] = $this->data->name;
+        $this->collection["slug"] = $this->data->slug;
         $this->collection['cover'] = $this->data->getFirstMediaUrl();
     }
 }

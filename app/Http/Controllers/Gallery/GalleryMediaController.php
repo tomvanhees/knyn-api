@@ -10,10 +10,17 @@ use Illuminate\Support\Facades\Auth;
 
 class GalleryMediaController extends Controller
 {
-    public function store(Request $request,$gallery_id, GalleryRepository $galleryRepository)
+    public function store(Request $request, GalleryRepository $galleryRepository)
     {
-       $media = $galleryRepository->addMediaFiles($request->file("image"), $gallery_id);
+       $media = $galleryRepository->addMediaFiles($request->file("image"), $request->gallery);
 
         return response()->json($media,200);
+    }
+
+
+    public function destroy(Request $request, $id, GalleryRepository $galleryRepository){
+        $galleryRepository->deleteMedia($id);
+
+        return response("success", 200);
     }
 }
