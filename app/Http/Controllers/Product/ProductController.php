@@ -10,19 +10,19 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\Product\ProductResource;
+use App\Traits\UsesResource;
 
 class ProductController extends Controller
 {
+    use UsesResource;
+
     public function index()
     {
-        $products = Product::where("user_id",Auth::id())->with("brand","categories")->get();
+        $products = Product::fromAuth()->with("brand","categories")->get();
 
-        $productResource = $products->map(function ($product) {
-            return (new ProductResource($product))->toArray();
-        });
-
-        return response()->json($productResource,200);
+        return response()->json($this->map($products),200);
     }
+
 
     public function store(Request $request)
     {
@@ -60,5 +60,17 @@ class ProductController extends Controller
         $created_product->categories()->sync($validated["categories"]);
 
         return response()->json("",200);
+    }
+
+
+    public function show($id)
+    {
+        $product = Product::fromAuth()->where("id",$id)->with("brand","categories")->first();
+        return response()->json($this->toResource($product),200);
+    }
+
+    protected function toResource($resource)
+    {
+        return (new ProductResource($resource))->toArray();
     }
 }

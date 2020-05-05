@@ -5,10 +5,11 @@ namespace App\Models\Product;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use App\Traits\UsesAuthScope;
 
 class Product extends Model implements HasMedia
 {
-    use InteractsWithMedia;
+    use InteractsWithMedia, UsesAuthScope;
 
 
     protected $fillable = ["user_id","name","slug","description","brand_id","price"];

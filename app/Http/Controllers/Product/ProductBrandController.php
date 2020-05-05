@@ -6,14 +6,18 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Product\ProductBrand;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Resources\Product\BrandResource;
+use App\Traits\UsesResource;
 
 class ProductBrandController extends Controller
 {
+    use UsesResource;
+
     public function index(Request $request)
     {
-        $brands = ProductBrand::where("user_id",Auth::id())->get();
+        $brands = ProductBrand::fromAuth()->get();
 
-        return response()->json($brands,200);
+        return response()->json($this->map($brands),200);
 
     }
 
@@ -28,6 +32,11 @@ class ProductBrandController extends Controller
                                           "user_id" => Auth::id()
                                       ]);
 
-        return response()->json($brand,200);
+        return response()->json($this->toResource($brand),200);
+    }
+
+    protected function toResource($resource)
+    {
+       return (new BrandResource($resource))->toArray();
     }
 }

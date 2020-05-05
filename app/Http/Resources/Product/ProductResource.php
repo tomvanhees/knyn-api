@@ -24,10 +24,7 @@ class ProductResource extends AbstractResource
 
     private function setBrand()
     {
-        return [
-            "id"   => $this->data->brand->id,
-            "name" => $this->data->brand->name
-        ];
+        return (new BrandResource($this->data->brand))->toArray();
     }
 
     private function setCategories()
@@ -35,10 +32,7 @@ class ProductResource extends AbstractResource
         $categories = [];
 
         foreach ($this->data->categories as $category) {
-            $categories[] = [
-                "id"   => $category->id,
-                "name" => $category->name
-            ];
+            $categories[] = (new CategoryResource($category))->toArray();
         }
 
         return $categories;

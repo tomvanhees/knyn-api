@@ -10,21 +10,24 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use App\Repositories\GalleryRepository;
 use Illuminate\Support\Facades\Validator;
+use App\Traits\UsesResource;
+use App\Http\Resources\Gallery\GalleryResource;
+use App\Http\Resources\Media\MediaResource;
 
 class GalleryController extends Controller
 {
+    use UsesResource;
+
     /**
      * Display a listing of the resource.
      *
-     * @param Request $request
-     * @param GalleryRepository $galleryRepository
      * @return JsonResponse
      */
-    public function index(Request $request, GalleryRepository $galleryRepository)
+    public function index()
     {
-        $galleries = $galleryRepository->get(Auth::id());
+        $galleries = Gallery::where("user_id",Auth::id())->get();
 
-        return response()->json($galleries,200);
+        return response()->json($this->map($galleries),200);
     }
 
     /**
@@ -34,31 +37,30 @@ class GalleryController extends Controller
      * @param GalleryRepository $galleryRepository
      * @return JsonResponse
      */
-    public function store(Request $request, GalleryRepository $galleryRepository)
+    public function store(Request $request,GalleryRepository $galleryRepository)
     {
-        $validator = Validator::make($request->toArray(), ["name" => "required|max:191"]);
+        $validator = Validator::make($request->toArray(),["name" => "required|max:191"]);
 
-        if ($validator->fails()){
-            return ;
+        if ($validator->fails()) {
+            return;
         }
 
-        $gallery = $galleryRepository->store($validator->validated(), Auth::id());
+        $gallery = $galleryRepository->store($validator->validated(),Auth::id());
 
-        return response()->json($gallery, 200);
+        return response()->json($gallery,200);
     }
 
     /**
      * Display the specified resource.
      *
      * @param $gallery_id
-     * @param GalleryRepository $galleryRepository
      * @return JsonResponse
      */
-    public function show($gallery_id, GalleryRepository $galleryRepository)
+    public function show($gallery_id)
     {
-            $gallery = $galleryRepository->show(Auth::id(), $gallery_id);
+        $gallery = Gallery::fromAuth()->where("id",$gallery_id)->first();
 
-            return response()->json($gallery, 200);
+        return response()->json($this->toResource($gallery),200);
     }
 
     /**
@@ -69,16 +71,16 @@ class GalleryController extends Controller
      * @param GalleryRepository $galleryRepository
      * @return void
      */
-    public function update(Request $request, $gallery_id, GalleryRepository $galleryRepository)
+    public function update(Request $request,$gallery_id,GalleryRepository $galleryRepository)
     {
-        $validator = Validator::make($request->toArray(), ["name" => "required|max:191"]);
+        $validator = Validator::make($request->toArray(),["name" => "required|max:191"]);
 
 
-        if ($validator->fails()){
-            return ;
+        if ($validator->fails()) {
+            return;
         }
 
-        $galleryRepository->update($validator->validated(), $gallery_id);
+        $galleryRepository->update($validator->validated(),$gallery_id);
 
         return response()->json([],200);
     }
@@ -92,5 +94,10 @@ class GalleryController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    protected function toResource($resource)
+    {
+        return (new GalleryResource($resource))->toArray();
     }
 }

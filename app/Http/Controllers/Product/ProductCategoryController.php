@@ -6,14 +6,18 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Product\ProductCategory;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Resources\Product\CategoryResource;
+use App\Traits\UsesResource;
 
 class ProductCategoryController extends Controller
 {
+    use UsesResource;
+
     public function index(Request $request)
     {
-        $categories = ProductCategory::where("user_id",Auth::id())->get();
+        $categories = ProductCategory::fromAuth()->get();
 
-        return response()->json($categories,200);
+        return response()->json($this->map($categories),200);
     }
 
     public function store(Request $request)
@@ -27,6 +31,10 @@ class ProductCategoryController extends Controller
                                                 "user_id" => Auth::id()
                                             ]);
 
-        return response()->json($category,200);
+        return response()->json($this->toResource($category),200);
+    }
+
+    protected function toResource($category){
+        return (new CategoryResource($category))->toArray();
     }
 }

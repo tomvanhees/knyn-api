@@ -15,19 +15,6 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class GalleryRepository
 {
-    public function get(int $user_id)
-    {
-
-        $galleries = Gallery::where("user_id",$user_id)->get();
-
-        $galleriesResource = $galleries->map(function ($item,$key) {
-            return (new GalleryResource($item))->toArray();
-        });
-
-        $galleriesResource = $galleriesResource->all();
-
-        return ["galleries" => $galleriesResource];
-    }
 
     public function store(array $data,int $user_id)
     {
@@ -39,20 +26,6 @@ class GalleryRepository
         ];
 
         return Gallery::create($gallery);
-    }
-
-    public function show($user_id,$gallery_id)
-    {
-        $gallery    = Gallery::where([["user_id",$user_id],["id",$gallery_id]])->first();
-        $mediaItems = $gallery->getMedia();
-
-        $galleryResource = (new GalleryResource($gallery))->toArray();
-        $mediaResource   = (new MediaResource($mediaItems))->toArray();
-
-        return [
-            "gallery" => $galleryResource,
-            "media"   => $mediaResource
-        ];
     }
 
     public function update(array $data,$gallery_id)
