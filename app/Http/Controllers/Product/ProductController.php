@@ -9,26 +9,31 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Resources\Product\ProductResource;
 
 class ProductController extends Controller
 {
     public function index()
     {
-        $products = Product::where("user_id",Auth::id())->get();
+        $products = Product::where("user_id",Auth::id())->with("brand","categories")->get();
 
-        return response()->json($products,200);
+        $productResource = $products->map(function ($product) {
+            return (new ProductResource($product))->toArray();
+        });
+
+        return response()->json($productResource,200);
     }
 
     public function store(Request $request)
     {
         $data = json_decode($request->product,TRUE);
 
-
         $validator = Validator::make($data,[
             "name"        => "required|max:191",
             "description" => "",
             "brand_id"    => "",
-            "price"       => "max:191"
+            "price"       => "max:191",
+            "categories"  => ""
         ]);
 
 
@@ -52,7 +57,7 @@ class ProductController extends Controller
             $created_product->addMedia($file)->toMediaCollection();
         }
 
-        $created_product->categories()->sync($validated['categories']);
+        $created_product->categories()->sync($validated["categories"]);
 
         return response()->json("",200);
     }
