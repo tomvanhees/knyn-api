@@ -40,27 +40,7 @@ class GalleryRepository
         return;
     }
 
-    public function addMediaFiles(array $files, $gallery_id)
-    {
-        $gallery = Gallery::find($gallery_id);
 
-        foreach ($files as $file) {
-            $gallery->addMedia($file)->toMediaCollection();
-        }
-
-        $mediaResource = (new MediaResource($gallery->getMedia()))->toArray();
-
-        return [
-            "media" => $mediaResource
-        ];
-    }
-
-    public function deleteMedia($id)
-    {
-        Media::find($id)->delete();
-
-        return;
-    }
 
 
 }

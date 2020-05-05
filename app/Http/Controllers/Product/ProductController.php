@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\Product\ProductResource;
 use App\Traits\UsesResource;
+use Illuminate\Support\Arr;
 
 class ProductController extends Controller
 {
@@ -53,11 +54,14 @@ class ProductController extends Controller
                                                "price"       => $validated['price']
                                            ]);
 
-        foreach ($request->image as $file) {
-            $created_product->addMedia($file)->toMediaCollection();
+        if ($request->hasFile("image")){
+            foreach ($request->file("image") as $file) {
+                $created_product->addMedia($file)->toMediaCollection();
+            }
         }
 
-        $created_product->categories()->sync($validated["categories"]);
+
+        $created_product->categories()->sync(data_get($validated["categories"], "*.id"));
 
         return response()->json("",200);
     }

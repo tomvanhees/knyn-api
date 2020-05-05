@@ -8,10 +8,17 @@ use Illuminate\Support\Facades\Log;
 use App\Repositories\GalleryRepository;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use App\Traits\UsesResource;
+use App\Models\Gallery\Gallery;
+use App\Http\Resources\Media\MediaResource;
+use App\Http\Resources\Media\MediaItemResource;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class GalleryMediaController extends Controller
 {
-    public function store(Request $request,GalleryRepository $galleryRepository)
+    use UsesResource;
+
+    public function store(Request $request)
     {
         $validator = Validator::make($request->toArray(),[
             "gallery" => "required"
@@ -19,17 +26,32 @@ class GalleryMediaController extends Controller
 
         if ($validator->fails()){
             return response()->json([],403);
+        }else{
+            $validated = $validator->validated();
         }
 
-        $media = $galleryRepository->addMediaFiles($request->file("image"),$request->gallery);
-        return response()->json($media,200);
+        $gallery = Gallery::find($validated["gallery"]);
+
+        if ($request->hasFile("image")){
+            foreach ($request->file("image") as $file) {
+                $gallery->addMedia($file)->toMediaCollection();
+            }
+        }
+
+
+        return response()->json($this->map(($gallery->getmedia())),200);
     }
 
 
-    public function destroy(Request $request,$id,GalleryRepository $galleryRepository)
+    public function destroy(Request $request,$id)
     {
-        $galleryRepository->deleteMedia($id);
+        Media::find($id)->delete();
 
         return response("success",200);
+    }
+
+    protected function toResource($resource)
+    {
+     return (new MediaItemResource($resource))->toArray();
     }
 }

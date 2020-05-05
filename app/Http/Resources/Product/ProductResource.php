@@ -18,7 +18,7 @@ class ProductResource extends AbstractResource
         $this->collection["price"]       = $this->data["price"];
         $this->collection["brand"]       = $this->setBrand();
         $this->collection["categories"]  = $this->setCategories();
-        $this->collection["images"]      = $this->setImages();
+        $this->collection["media"]      = $this->setMedia();
         $this->collection["cover"]       = $this->setCover();
     }
 
@@ -38,7 +38,7 @@ class ProductResource extends AbstractResource
         return $categories;
     }
 
-    private function setImages()
+    private function setMedia()
     {
         $items = [];
         $media = $this->data->getMedia();
