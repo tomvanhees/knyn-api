@@ -13,45 +13,45 @@ use App\Models\Gallery\Gallery;
 use App\Http\Resources\Media\MediaResource;
 use App\Http\Resources\Media\MediaItemResource;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use App\Repositories\MediaRepository;
 
 class GalleryMediaController extends Controller
 {
     use UsesResource;
 
-    public function store(Request $request)
+    public function store(Request $request,MediaRepository $mediaRepository)
     {
         $validator = Validator::make($request->toArray(),[
             "gallery" => "required"
         ]);
 
-        if ($validator->fails()){
+        if ($validator->fails()) {
             return response()->json([],403);
-        }else{
+        } else {
             $validated = $validator->validated();
         }
 
         $gallery = Gallery::find($validated["gallery"]);
 
-        if ($request->hasFile("image")){
+        if ($request->hasFile("image")) {
             foreach ($request->file("image") as $file) {
-                $gallery->addMedia($file)->toMediaCollection();
+                $mediaRepository->addGalleryImage($gallery,$file);
             }
         }
-
 
         return response()->json($this->map(($gallery->getmedia())),200);
     }
 
 
-    public function destroy(Request $request,$id)
+    public function destroy(Request $request,$id,MediaRepository $mediaRepository)
     {
-        Media::find($id)->delete();
+        $mediaRepository->destroy($id);
 
         return response("success",200);
     }
 
     protected function toResource($resource)
     {
-     return (new MediaItemResource($resource))->toArray();
+        return (new MediaItemResource($resource))->toArray();
     }
 }

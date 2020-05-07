@@ -8,6 +8,9 @@ use App\Http\Controllers\Gallery\GalleryMediaController;
 use App\Http\Controllers\Product\ProductBrandController;
 use App\Http\Controllers\Product\ProductCategoryController;
 use App\Http\Controllers\Product\ProductController;
+use App\Http\Controllers\Product\ProductMediaController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Information\InformationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,6 +31,8 @@ Route::middleware('auth:api')->get('/user',function (Request $request) {
 Route::prefix("v1")->group(function () {
 
     Route::post("/user/store",[RegisterController::class,"register"]);
+    Route::post("/user/login",[LoginController::class,"login"]);
+
 
     Route::middleware('auth:sanctum')->group(function () {
 
@@ -47,9 +52,16 @@ Route::prefix("v1")->group(function () {
         Route::post("/product/categories",[ProductCategoryController::class,"store"]);
 
 
+        Route::post("/product/media",[ProductMediaController::class,"store"]);
+        Route::delete("/product/media/{id}",[ProductMediaController::class,"destroy"]);
+
+
         Route::get("/product",[ProductController::class,"index"]);
         Route::post("/product",[ProductController::class,"store"]);
         Route::get("/product/{id}",[ProductController::class,"show"]);
+        Route::patch("/product/{id}",[ProductController::class,"update"]);
 
+        Route::get("/information",[InformationController::class,"index"]);
+        Route::post("/information",[InformationController::class,"store"]);
     });
 });

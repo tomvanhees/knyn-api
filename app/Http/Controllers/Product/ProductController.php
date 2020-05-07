@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\Product\ProductResource;
 use App\Traits\UsesResource;
 use Illuminate\Support\Arr;
+use App\Repositories\MediaRepository;
 
 class ProductController extends Controller
 {
@@ -25,18 +26,11 @@ class ProductController extends Controller
     }
 
 
-    public function store(Request $request)
+    public function store(Request $request,MediaRepository $mediaRepository)
     {
         $data = json_decode($request->product,TRUE);
 
-        $validator = Validator::make($data,[
-            "name"        => "required|max:191",
-            "description" => "",
-            "brand_id"    => "",
-            "price"       => "max:191",
-            "categories"  => ""
-        ]);
-
+        $validator = Validator::make($data,$this->validationRules());
 
         if ($validator->fails()) {
             return response()->json("",401);
@@ -44,24 +38,15 @@ class ProductController extends Controller
             $validated = $validator->validated();
         }
 
+        $product = Product::create($this->createProduct($validated));
 
-        $created_product = Product::create([
-                                               "user_id"     => Auth::id(),
-                                               "name"        => $validated['name'],
-                                               "slug"        => Str::slug($validated['name']),
-                                               "description" => $validated['description'],
-                                               "brand_id"    => $validated['brand_id'],
-                                               "price"       => $validated['price']
-                                           ]);
-
-        if ($request->hasFile("image")){
+        if ($request->hasFile("image")) {
             foreach ($request->file("image") as $file) {
-                $created_product->addMedia($file)->toMediaCollection();
+                $mediaRepository->addProductImage($product,$file);
             }
         }
 
-
-        $created_product->categories()->sync(data_get($validated["categories"], "*.id"));
+        $this->syncCategories($product,$validated);
 
         return response()->json("",200);
     }
@@ -71,6 +56,66 @@ class ProductController extends Controller
     {
         $product = Product::fromAuth()->where("id",$id)->with("brand","categories")->first();
         return response()->json($this->toResource($product),200);
+    }
+
+
+    public function update(Request $request,$id)
+    {
+        $validated = $request->validate($this->validationRules());
+
+        $product = Product::find($id);
+        $product->update([
+                             "name"        => $validated["name"],
+                             "slug"        => Str::slug($validated["name"]),
+                             "description" => $validated["description"],
+                             "price"       => $validated["price"],
+                             "brand_id"    => $validated["brand_id"]
+                         ]);
+
+        $this->syncCategories($product,$validated);
+
+        return response()->json([],200);
+    }
+
+    /**
+     * @param Product $product
+     * @param array $validated
+     */
+    private function syncCategories(Product $product,array $validated)
+    {
+        $product->categories()->sync(data_get($validated["categories"],"*.id"));
+    }
+
+    /**
+     * @return array|string[]
+     */
+    private function validationRules()
+    : array
+    {
+        return [
+            "name"        => "required|max:191",
+            "description" => "",
+            "brand_id"    => "",
+            "price"       => "max:191",
+            "categories"  => ""
+        ];
+    }
+
+    /**
+     * @param array $validated
+     * @return array
+     */
+    private function createProduct(array $validated)
+    : array
+    {
+        return [
+            "user_id"     => Auth::id(),
+            "name"        => $validated['name'],
+            "slug"        => Str::slug($validated['name']),
+            "description" => $validated['description'],
+            "brand_id"    => $validated['brand_id'],
+            "price"       => $validated['price']
+        ];
     }
 
     protected function toResource($resource)

@@ -5,6 +5,7 @@ namespace App\Http\Resources\Product;
 
 
 use App\Http\Resources\AbstractResource;
+use App\Http\Resources\Media\MediaItemResource;
 
 class ProductResource extends AbstractResource
 {
@@ -44,7 +45,7 @@ class ProductResource extends AbstractResource
         $media = $this->data->getMedia();
 
         foreach ($media as $item) {
-            $items[] = $item->getFullUrl();
+            $items[] = (new MediaItemResource($item))->toArray();
         }
         return $items;
     }
