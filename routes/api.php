@@ -11,6 +11,7 @@ use App\Http\Controllers\Product\ProductController;
 use App\Http\Controllers\Product\ProductMediaController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Information\InformationController;
+use App\Http\Controllers\Auth\LogoutController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,21 +24,17 @@ use App\Http\Controllers\Information\InformationController;
 |
 */
 
-Route::middleware('auth:api')->get('/user',function (Request $request) {
-    return $request->user();
-});
-
-
 Route::prefix("v1")->group(function () {
 
     Route::post("/user/store",[RegisterController::class,"register"]);
     Route::post("/user/login",[LoginController::class,"login"]);
+    Route::post("/user/logout",[LogoutController::class,"logout"]);
 
 
     Route::middleware('auth:sanctum')->group(function () {
 
-        Route::patch("/gallery/media",[GalleryMediaController::class,"store"]);
-        Route::delete("/gallery/media/{id}",[GalleryMediaController::class,"destroy"]);
+        Route::patch("/gallery/{gallery_id}/media",[GalleryMediaController::class,"update"]);
+        Route::delete("/gallery/{gallery_id}/media/{media_id}",[GalleryMediaController::class,"destroy"]);
 
         Route::get("/gallery",[GalleryController::class,"index"]);
         Route::post("/gallery",[GalleryController::class,"store"]);
@@ -52,8 +49,8 @@ Route::prefix("v1")->group(function () {
         Route::post("/product/categories",[ProductCategoryController::class,"store"]);
 
 
-        Route::post("/product/media",[ProductMediaController::class,"store"]);
-        Route::delete("/product/media/{id}",[ProductMediaController::class,"destroy"]);
+        Route::patch("/product/{product_id}/media",[ProductMediaController::class,"store"]);
+        Route::delete("/product/{product_id}/media/{media_id}",[ProductMediaController::class,"destroy"]);
 
 
         Route::get("/product",[ProductController::class,"index"]);

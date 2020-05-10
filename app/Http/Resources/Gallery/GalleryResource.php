@@ -21,7 +21,13 @@ class GalleryResource extends AbstractResource
 
     private function getCover()
     {
-        return $this->data->getFirstMediaUrl();
+        $url =$this->data->getFirstMediaUrl("default","cover");
+        Log::debug($url);
+
+        if ($url === ""){
+            $url = "https://picsum.photos/250/250";
+        }
+        return  $url ;
     }
 
     private function getMedia()

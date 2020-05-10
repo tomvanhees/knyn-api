@@ -14,10 +14,9 @@ class ProductMediaController extends Controller
 {
     use UsesResource;
 
-    public function store(Request $request,MediaRepository $mediaRepository)
+    public function store(Request $request, $product_id, MediaRepository $mediaRepository)
     {
-        $validated = $request->validate(["product_id" => "required"]);
-        $product   = Product::find($validated["product_id"]);
+        $product   = Product::find($product_id);
 
         if ($request->hasFile("image")) {
             foreach ($request->file("image") as $file) {
@@ -28,9 +27,9 @@ class ProductMediaController extends Controller
         return response()->json($this->map(($product->getMedia())),200);
     }
 
-    public function destroy(Request $request,$id,MediaRepository $mediaRepository)
+    public function destroy($product_id, $media_id,MediaRepository $mediaRepository)
     {
-        $mediaRepository->destroy($id);
+        $mediaRepository->destroy($media_id);
         return response()->json([],200);
     }
 

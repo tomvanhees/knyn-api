@@ -53,11 +53,8 @@ class LoginController extends Controller
     protected function authenticated(Request $request,$user)
     {
 
-        $user->tokens()->where("name","admin")->delete();
-
-        $token = $user->createToken("admin")->plainTextToken;
-
-        return $token;
+        Log::debug("create Token");
+        return $user->createToken("admin")->plainTextToken;
     }
 
     /**
@@ -70,7 +67,11 @@ class LoginController extends Controller
      */
     public function login(Request $request)
     {
+        Log::debug("login");
+
         $this->validateLogin($request);
+
+        Log::debug("Login validated");
 
         // If the class is using the ThrottlesLogins trait, we can automatically throttle
         // the login attempts for this application. We'll key this by the username and
@@ -82,6 +83,8 @@ class LoginController extends Controller
             return $this->sendLockoutResponse($request);
         }
 
+
+        Log::debug("Before attempt login");
         $user = $this->attemptLogin($request);
 
         if ($user) {
@@ -108,14 +111,12 @@ class LoginController extends Controller
 
         $user = User::where("email",$request->email)->first();
 
-
-        Log::debug($request->password);
-
-
-        if (Hash::check($request->password,$user->password)) {
-            return $user;
+        if (isset($user)){
+            if (Hash::check($request->password,$user->password)) {
+                return $user;
+            }
         }
-        Log::debug("hash check failed");
+
         return FALSE;
     }
 

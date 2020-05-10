@@ -13,11 +13,15 @@ use App\Http\Resources\Product\ProductResource;
 use App\Traits\UsesResource;
 use Illuminate\Support\Arr;
 use App\Repositories\MediaRepository;
+use App\Http\Requests\ProductRequest;
 
 class ProductController extends Controller
 {
     use UsesResource;
 
+    /**
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function index()
     {
         $products = Product::fromAuth()->with("brand","categories")->get();
@@ -25,40 +29,41 @@ class ProductController extends Controller
         return response()->json($this->map($products),200);
     }
 
-
-    public function store(Request $request,MediaRepository $mediaRepository)
+    /**
+     * @param ProductRequest $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function store(ProductRequest $request)
     {
-        $data = json_decode($request->product,TRUE);
 
-        $validator = Validator::make($data,$this->validationRules());
+        $product = Product::create($this->createProduct($request->all()));
+        $this->syncCategories($product,$request->all());
 
-        if ($validator->fails()) {
-            return response()->json("",401);
-        } else {
-            $validated = $validator->validated();
-        }
-
-        $product = Product::create($this->createProduct($validated));
-
-        if ($request->hasFile("image")) {
-            foreach ($request->file("image") as $file) {
-                $mediaRepository->addProductImage($product,$file);
-            }
-        }
-
-        $this->syncCategories($product,$validated);
-
-        return response()->json("",200);
+        return response()->json([
+                                    "product" => [
+                                        "id" => $product->id
+                                    ],
+                                    "message" => [
+                                        "success" => "Product is toegevoegd"
+                                    ]
+                                ],200);
     }
 
-
+    /**
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function show($id)
     {
         $product = Product::fromAuth()->where("id",$id)->with("brand","categories")->first();
         return response()->json($this->toResource($product),200);
     }
 
-
+    /**
+     * @param Request $request
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function update(Request $request,$id)
     {
         $validated = $request->validate($this->validationRules());
@@ -118,6 +123,10 @@ class ProductController extends Controller
         ];
     }
 
+    /**
+     * @param $resource
+     * @return array
+     */
     protected function toResource($resource)
     {
         return (new ProductResource($resource))->toArray();

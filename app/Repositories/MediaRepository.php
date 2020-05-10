@@ -13,7 +13,9 @@ class MediaRepository
 {
     public function addGalleryImage(Gallery $gallery,UploadedFile $file)
     {
-        $gallery->addMedia($file)->toMediaCollection();
+        $gallery
+            ->addMedia($file)
+            ->toMediaCollection();
     }
 
 

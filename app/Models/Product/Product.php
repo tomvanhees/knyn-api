@@ -9,7 +9,7 @@ use App\Traits\UsesAuthScope;
 
 class Product extends Model implements HasMedia
 {
-    use InteractsWithMedia, UsesAuthScope;
+    use InteractsWithMedia,UsesAuthScope;
 
 
     protected $fillable = ["user_id","name","slug","description","brand_id","price"];
@@ -17,7 +17,10 @@ class Product extends Model implements HasMedia
 
     public function brand()
     {
-        return $this->belongsTo(ProductBrand::class);
+        return $this->belongsTo(ProductBrand::class)->withDefault([
+                                                                      "id"   => 0,
+                                                                      "name" => "Merkloos"
+                                                                  ]);
     }
 
     public function categories()

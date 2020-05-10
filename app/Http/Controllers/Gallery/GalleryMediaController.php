@@ -14,38 +14,37 @@ use App\Http\Resources\Media\MediaResource;
 use App\Http\Resources\Media\MediaItemResource;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use App\Repositories\MediaRepository;
+use Illuminate\Support\Facades\Cache;
 
 class GalleryMediaController extends Controller
 {
     use UsesResource;
 
-    public function store(Request $request,MediaRepository $mediaRepository)
+    /**
+     * @param Request $request
+     * @param $gallery_id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function update(Request $request, $gallery_id)
     {
-        $validator = Validator::make($request->toArray(),[
-            "gallery" => "required"
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([],403);
-        } else {
-            $validated = $validator->validated();
-        }
-
-        $gallery = Gallery::find($validated["gallery"]);
+        $gallery =  Cache::remember(`gallery_${gallery_id}`, now()->addMinutes(2), function () use ($gallery_id){
+            return Gallery::find($gallery_id);
+        });
 
         if ($request->hasFile("image")) {
-            foreach ($request->file("image") as $file) {
-                $mediaRepository->addGalleryImage($gallery,$file);
-            }
+
+            $gallery
+                ->addMedia($request->file("image"))
+                ->toMediaCollection();
         }
 
-        return response()->json($this->map(($gallery->getmedia())),200);
+        return response()->json([],200);
     }
 
 
-    public function destroy(Request $request,$id,MediaRepository $mediaRepository)
+    public function destroy($gallery_id, $media_id,MediaRepository $mediaRepository)
     {
-        $mediaRepository->destroy($id);
+        $mediaRepository->destroy($media_id);
 
         return response("success",200);
     }

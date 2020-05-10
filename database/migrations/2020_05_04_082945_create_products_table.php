@@ -19,7 +19,7 @@ class CreateProductsTable extends Migration
             $table->string("name",191);
             $table->string("slug",191);
             $table->text("description");
-            $table->integer("brand_id");
+            $table->integer("brand_id")->nullable();
             $table->string("price");
             $table->timestamps();
         });
