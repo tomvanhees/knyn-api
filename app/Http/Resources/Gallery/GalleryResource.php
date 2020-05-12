@@ -4,39 +4,59 @@
 namespace App\Http\Resources\Gallery;
 
 use App\Http\Resources\AbstractResource;
-use Illuminate\Support\Facades\Log;
-use App\Http\Resources\Media\MediaItemResource;
+use App\Http\Resources\Media\GalleryMediaResource;
+use Illuminate\Database\Eloquent\Collection;
 
 class GalleryResource extends AbstractResource
 {
+    /**
+     * @var Collection
+     */
+    private Collection $media;
 
     protected function process()
     {
+        $this->setMedia();
+
         $this->collection["id"]    = $this->data->id;
         $this->collection["name"]  = $this->data->name;
         $this->collection["slug"]  = $this->data->slug;
         $this->collection['cover'] = $this->getCover();;
-        $this->collection['media'] = $this->getMedia();
+        $this->collection['media'] = $this->getMediaItems();
     }
 
     private function getCover()
     {
-        $url =$this->data->getFirstMediaUrl("default","cover");
-        Log::debug($url);
+        if (count($this->media) === 0) {
 
-        if ($url === ""){
-            $url = "https://picsum.photos/250/250";
+            /**
+             * TODO
+             * Adding placeholder URL
+             */
+            return "";
         }
-        return  $url ;
+
+        if ($this->media[0]->hasGeneratedConversion("cover")) {
+            return $this->data->getFirstMediaUrl("default","cover");
+        }
+
+        return $this->data->getFirstMediaUrl();
+
+
     }
 
-    private function getMedia()
+    private function setMedia()
+    {
+        $this->media = $this->data->getMedia();
+    }
+
+
+    private function getMediaItems()
     {
         $mediaItems = [];
-        $media      = $this->data->getMedia();
 
-        foreach ($media as $mediaItem) {
-            $mediaItems[] = (new MediaItemResource($mediaItem))->toArray();
+        foreach ($this->media as $mediaItem) {
+            $mediaItems[] = (new GalleryMediaResource($mediaItem))->toArray();
         }
 
         return $mediaItems;

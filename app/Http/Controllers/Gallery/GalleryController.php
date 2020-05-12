@@ -25,7 +25,7 @@ class GalleryController extends Controller
      */
     public function index()
     {
-        $galleries = Gallery::where("user_id",Auth::id())->get();
+        $galleries = Gallery::FromAuth()->get();
 
         return response()->json($this->map($galleries),200);
     }
@@ -47,7 +47,7 @@ class GalleryController extends Controller
 
         $gallery = $galleryRepository->store($validator->validated(),Auth::id());
 
-        return response()->json($gallery,200);
+        return response()->json($this->toResource($gallery),200);
     }
 
     /**

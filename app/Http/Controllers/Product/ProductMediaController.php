@@ -9,32 +9,28 @@ use App\Models\Product\Product;
 use App\Traits\UsesResource;
 use App\Http\Resources\Media\MediaItemResource;
 use Illuminate\Support\Facades\Log;
+use App\Http\Resources\Media\ProductMediaResource;
+use Illuminate\Support\Facades\Cache;
+use function foo\func;
 
 class ProductMediaController extends Controller
 {
-    use UsesResource;
-
-    public function store(Request $request, $product_id, MediaRepository $mediaRepository)
+    public function store(Request $request, $product_id)
     {
-        $product   = Product::find($product_id);
+        $product   = Cache::remember(`product_${product_id}`, now()->addMinutes(2), function() use ($product_id){
+           return Product::find($product_id);
+        });
 
         if ($request->hasFile("image")) {
-            foreach ($request->file("image") as $file) {
-                $mediaRepository->addProductImage($product,$file);
-            }
+                $product->addMedia($request->file("image"))->toMediaCollection();
         }
 
-        return response()->json($this->map(($product->getMedia())),200);
+        return response()->json([],200);
     }
 
     public function destroy($product_id, $media_id,MediaRepository $mediaRepository)
     {
         $mediaRepository->destroy($media_id);
         return response()->json([],200);
-    }
-
-    protected function toResource($resource)
-    {
-      return (new MediaItemResource($resource))->toArray();
     }
 }

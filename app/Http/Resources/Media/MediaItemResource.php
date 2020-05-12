@@ -3,11 +3,9 @@
 
 namespace App\Http\Resources\Media;
 
-
 use App\Http\Resources\AbstractResource;
-use Illuminate\Support\Facades\Log;
 
-class MediaItemResource extends AbstractResource
+abstract class MediaItemResource extends AbstractResource
 {
 
     protected function process()
@@ -18,9 +16,9 @@ class MediaItemResource extends AbstractResource
         $this->collection['order'] = $this->data->order_column;
     }
 
-
-
-    private function getPath(){
-        return $this->data->getFullUrl("gallery");
-    }
+    /**
+     * returns the path of the mediaItem
+     * @return string
+     */
+    abstract function getPath():string ;
 }

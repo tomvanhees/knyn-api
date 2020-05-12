@@ -6,6 +6,7 @@ namespace App\Http\Resources\Product;
 
 use App\Http\Resources\AbstractResource;
 use App\Http\Resources\Media\MediaItemResource;
+use App\Http\Resources\Media\ProductMediaResource;
 
 class ProductResource extends AbstractResource
 {
@@ -19,7 +20,7 @@ class ProductResource extends AbstractResource
         $this->collection["price"]       = $this->data["price"];
         $this->collection["brand"]       = $this->setBrand();
         $this->collection["categories"]  = $this->setCategories();
-        $this->collection["media"]      = $this->setMedia();
+        $this->collection["media"]       = $this->setMedia();
         $this->collection["cover"]       = $this->setCover();
     }
 
@@ -45,13 +46,13 @@ class ProductResource extends AbstractResource
         $media = $this->data->getMedia();
 
         foreach ($media as $item) {
-            $items[] = (new MediaItemResource($item))->toArray();
+            $items[] = (new ProductMediaResource($item))->toArray();
         }
         return $items;
     }
 
     private function setCover()
     {
-        return $this->data->getFirstMediaUrl();
+        return $this->data->getFirstMediaUrl("default", "cover");
     }
 }

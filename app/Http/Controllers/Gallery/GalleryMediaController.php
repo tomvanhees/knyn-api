@@ -15,10 +15,16 @@ use App\Http\Resources\Media\MediaItemResource;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use App\Repositories\MediaRepository;
 use Illuminate\Support\Facades\Cache;
+use App\Http\Resources\Media\GalleryMediaResource;
 
 class GalleryMediaController extends Controller
 {
     use UsesResource;
+
+
+    public function show($id){
+
+    }
 
     /**
      * @param Request $request
@@ -38,7 +44,9 @@ class GalleryMediaController extends Controller
                 ->toMediaCollection();
         }
 
-        return response()->json([],200);
+        $mediaItem = $gallery->media()->latest()->first();
+
+        return response()->json($this->toResource($mediaItem),200);
     }
 
 
@@ -51,6 +59,6 @@ class GalleryMediaController extends Controller
 
     protected function toResource($resource)
     {
-        return (new MediaItemResource($resource))->toArray();
+        return (new GalleryMediaResource($resource))->toArray();
     }
 }
