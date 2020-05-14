@@ -52,7 +52,7 @@ class GenerateAppTokenQR implements ShouldQueue
         $path = $this->user->id . "/qr/app.png";
 
         $qrcode = new QrGenerator();
-        $qrcode->write('http://app.tomvanhees.be/authenticate/' . $this->token);
+        $qrcode->write('http://app.tomvanhees.be/#/authenticate/' . $this->token);
         $qrcode->save($path);
 
         QrCode::create([
