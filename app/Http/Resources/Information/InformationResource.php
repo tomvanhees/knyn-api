@@ -24,6 +24,11 @@ class InformationResource extends AbstractResource
     private function getQRCodes()
     {
        $mappedCodes = $this->data->qr_codes->mapWithKeys(function ($code){
+
+           if ($code["path"] === ""){
+               return [$code["name"] => ""];
+           }
+
            return [$code["name"] => Storage::disk("public")->url($code["path"])];
         });
 
