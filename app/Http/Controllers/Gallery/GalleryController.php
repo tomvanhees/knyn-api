@@ -69,16 +69,16 @@ class GalleryController extends Controller
      * @param \Illuminate\Http\Request $request
      * @param $gallery_id
      * @param GalleryRepository $galleryRepository
-     * @return void
+     * @return JsonResponse
      */
     public function update(Request $request,$gallery_id,GalleryRepository $galleryRepository)
     {
         $validator = Validator::make($request->toArray(),["name" => "required|max:191"]);
 
-
         if ($validator->fails()) {
             return;
         }
+
 
         $galleryRepository->update($validator->validated(),$gallery_id);
 
@@ -89,12 +89,17 @@ class GalleryController extends Controller
      * Remove the specified resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
     public function destroy($id)
     {
-        //
+        $gallery = Gallery::find($id);
+        $gallery->clearMediaCollection();
+        $gallery->delete();
+
+        return response()->json([],200);
     }
+
 
     protected function toResource($resource)
     {

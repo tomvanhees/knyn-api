@@ -32,7 +32,6 @@ Route::prefix("v1")->group(function () {
 
 
     Route::middleware('auth:sanctum')->group(function () {
-
         Route::patch("/gallery/{gallery_id}/media",[GalleryMediaController::class,"update"]);
         Route::delete("/gallery/{gallery_id}/media/{media_id}",[GalleryMediaController::class,"destroy"]);
 
@@ -40,23 +39,26 @@ Route::prefix("v1")->group(function () {
         Route::post("/gallery",[GalleryController::class,"store"]);
         Route::get("/gallery/{id}",[GalleryController::class,"show"]);
         Route::patch("/gallery/{id}",[GalleryController::class,"update"]);
+        Route::delete("/gallery/{id}",[GalleryController::class,"destroy"]);
 
 
         Route::get("/product/brands",[ProductBrandController::class,"index"]);
         Route::post("/product/brands",[ProductBrandController::class,"store"]);
+        Route::delete("/product/brands/{id}",[ProductBrandController::class,"destroy"]);
 
         Route::get("/product/categories",[ProductCategoryController::class,"index"]);
         Route::post("/product/categories",[ProductCategoryController::class,"store"]);
-
+        Route::delete("/product/categories/{id}",[ProductCategoryController::class,"destroy"]);
 
         Route::patch("/product/{product_id}/media",[ProductMediaController::class,"store"]);
         Route::delete("/product/{product_id}/media/{media_id}",[ProductMediaController::class,"destroy"]);
-
 
         Route::get("/product",[ProductController::class,"index"]);
         Route::post("/product",[ProductController::class,"store"]);
         Route::get("/product/{id}",[ProductController::class,"show"]);
         Route::patch("/product/{id}",[ProductController::class,"update"]);
+        Route::delete("/product/{id}",[ProductController::class,"destroy"]);
+
 
         Route::get("/information",[InformationController::class,"index"]);
         Route::post("/information",[InformationController::class,"store"]);

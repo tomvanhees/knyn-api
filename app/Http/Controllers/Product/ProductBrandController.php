@@ -35,8 +35,17 @@ class ProductBrandController extends Controller
         return response()->json($this->toResource($brand),200);
     }
 
+
+    public function destroy($id)
+    {
+
+        ProductBrand::find($id)->delete();
+
+        return response()->json([],200);
+    }
+
     protected function toResource($resource)
     {
-       return (new BrandResource($resource))->toArray();
+        return (new BrandResource($resource))->toArray();
     }
 }

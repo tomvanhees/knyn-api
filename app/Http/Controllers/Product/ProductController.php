@@ -82,6 +82,17 @@ class ProductController extends Controller
         return response()->json([],200);
     }
 
+
+    public function destroy($id)
+    {
+        $product = Product::find($id);
+        $product->clearMediaCollection();
+        $product->delete();
+
+        return response()->json([],200);
+    }
+
+
     /**
      * @param Product $product
      * @param array $validated

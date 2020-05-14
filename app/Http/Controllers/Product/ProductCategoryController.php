@@ -34,7 +34,16 @@ class ProductCategoryController extends Controller
         return response()->json($this->toResource($category),200);
     }
 
-    protected function toResource($category){
+
+    public function destroy($id)
+    {
+        ProductCategory::find($id)->delete();
+
+        return response()->json([],200);
+    }
+
+    protected function toResource($category)
+    {
         return (new CategoryResource($category))->toArray();
     }
 }
