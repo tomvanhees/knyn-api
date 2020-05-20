@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Gallery\GalleryController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -12,6 +11,8 @@ use App\Http\Controllers\Product\ProductMediaController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Information\InformationController;
 use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\Feedback\QuestionsController;
+use App\Http\Controllers\Statistics\StatisticsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -62,5 +63,17 @@ Route::prefix("v1")->group(function () {
 
         Route::get("/information",[InformationController::class,"index"]);
         Route::post("/information",[InformationController::class,"store"]);
+
+
+        Route::get("/feedback/questions",[QuestionsController::class,"index"]);
+        Route::post("/feedback/questions",[QuestionsController::class,"store"]);
+        Route::get("/feedback/questions/{id}",[QuestionsController::class,"show"]);
+        Route::patch("/feedback/questions/{id}",[QuestionsController::class,"update"]);
+        Route::delete("/feedback/questions/{id}",[QuestionsController::class,"destroy"]);
+
+
+        Route::get("/statistics", [StatisticsController::class,"index"]);
+
+
     });
 });
