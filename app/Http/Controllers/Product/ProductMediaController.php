@@ -24,10 +24,8 @@ class ProductMediaController extends Controller
         });
 
         if ($request->hasFile("image")) {
-                $product->addMedia($request->file("image"))->toMediaCollection();
+            $media =     $product->addMedia($request->file("image"))->toMediaCollection();
         }
-
-        $media = $product->media()->latest()->first();
 
         return response()->json($this->toResource($media),200);
     }
@@ -38,8 +36,8 @@ class ProductMediaController extends Controller
         return response()->json([],200);
     }
 
-    protected function toResource($resource)
+    protected function getResource($resource)
     {
-       return (new ProductMediaResource($resource))->toArray();
+       return new ProductMediaResource($resource);
     }
 }

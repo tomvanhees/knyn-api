@@ -33,18 +33,22 @@ class GalleryMediaController extends Controller
      */
     public function update(Request $request, $gallery_id)
     {
-        $gallery =  Cache::remember(`gallery_${gallery_id}`, now()->addMinutes(2), function () use ($gallery_id){
-            return Gallery::find($gallery_id);
-        });
+
+        Log::debug($gallery_id);
+
+        $gallery = Gallery::find($gallery_id);
+
+//        $gallery =  Cache::remember(`gallery_${gallery_id}`, now()->addMinutes(2), function () use ($gallery_id){
+//            return Gallery::find($gallery_id);
+//        });
+
+        Log::debug($gallery);
 
         if ($request->hasFile("image")) {
-
-            $gallery
+            $mediaItem =   $gallery
                 ->addMedia($request->file("image"))
                 ->toMediaCollection();
         }
-
-        $mediaItem = $gallery->media()->latest()->first();
 
         return response()->json($this->toResource($mediaItem),200);
     }
@@ -57,8 +61,8 @@ class GalleryMediaController extends Controller
         return response("success",200);
     }
 
-    protected function toResource($resource)
+    protected function getResource($resource)
     {
-        return (new GalleryMediaResource($resource))->toArray();
+        return new GalleryMediaResource($resource);
     }
 }

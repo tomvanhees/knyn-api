@@ -24,11 +24,11 @@ class ProductBrandController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-                                            "name" => "required|max:191"
+                                            "content.name" => "required|max:191"
                                         ]);
 
         $brand = ProductBrand::create([
-                                          "name"    => $validated["name"],
+                                          "name"    => $validated["content"]["name"],
                                           "user_id" => Auth::id()
                                       ]);
 
@@ -44,8 +44,8 @@ class ProductBrandController extends Controller
         return response()->json([],200);
     }
 
-    protected function toResource($resource)
+    protected function getResource($resource)
     {
-        return (new BrandResource($resource))->toArray();
+        return new BrandResource($resource);
     }
 }

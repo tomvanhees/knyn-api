@@ -96,8 +96,8 @@ class InformationController extends Controller
     }
 
 
-    protected function toResource($resource)
+    protected function getResource($resource)
     {
-        return (new InformationResource($resource))->toArray();
+        return new InformationResource($resource);
     }
 }

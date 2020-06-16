@@ -13,6 +13,7 @@ use App\Http\Controllers\Information\InformationController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Feedback\QuestionsController;
 use App\Http\Controllers\Statistics\StatisticsController;
+use App\Http\Controllers\Feedback\AnswersController;
 
 /*
 |--------------------------------------------------------------------------
@@ -72,7 +73,10 @@ Route::prefix("v1")->group(function () {
         Route::delete("/feedback/questions/{id}",[QuestionsController::class,"destroy"]);
 
 
-        Route::get("/statistics", [StatisticsController::class,"index"]);
+        Route::get("/feedback/answers",[AnswersController::class,"index"]);
+        Route::post("/feedback/answers",[AnswersController::class,"store"]);
+
+        Route::get("/statistics",[StatisticsController::class,"index"]);
 
 
     });

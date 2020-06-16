@@ -27,7 +27,7 @@ class GalleryController extends Controller
     {
         $galleries = Gallery::FromAuth()->get();
 
-        return response()->json($this->map($galleries),200);
+        return response()->json($this->map($galleries), 200);
     }
 
     /**
@@ -37,17 +37,18 @@ class GalleryController extends Controller
      * @param GalleryRepository $galleryRepository
      * @return JsonResponse
      */
-    public function store(Request $request,GalleryRepository $galleryRepository)
+    public function store(Request $request, GalleryRepository $galleryRepository)
     {
-        $validator = Validator::make($request->toArray(),["name" => "required|max:191"]);
+        $validator = Validator::make($request->toArray(), ["content.name" => "required|max:191"]);
 
         if ($validator->fails()) {
             return;
         }
+        $validated = $validator->validated();
 
-        $gallery = $galleryRepository->store($validator->validated(),Auth::id());
+        $gallery = $galleryRepository->store(["name" => $validated["content"]["name"]], Auth::id());
 
-        return response()->json($this->toResource($gallery),200);
+        return response()->json($this->toResource($gallery), 200);
     }
 
     /**
@@ -58,9 +59,9 @@ class GalleryController extends Controller
      */
     public function show($gallery_id)
     {
-        $gallery = Gallery::fromAuth()->where("id",$gallery_id)->first();
+        $gallery = Gallery::fromAuth()->where("id", $gallery_id)->first();
 
-        return response()->json($this->toResource($gallery),200);
+        return response()->json($this->toResource($gallery), 200);
     }
 
     /**
@@ -71,18 +72,14 @@ class GalleryController extends Controller
      * @param GalleryRepository $galleryRepository
      * @return JsonResponse
      */
-    public function update(Request $request,$gallery_id,GalleryRepository $galleryRepository)
+    public function update(Request $request, $gallery_id, GalleryRepository $galleryRepository)
     {
-        $validator = Validator::make($request->toArray(),["name" => "required|max:191"]);
+        Log::debug($request);
 
-        if ($validator->fails()) {
-            return;
-        }
+        $validated = $request->validate(["content.name" => "required|max:191"]);
+        $galleryRepository->update(["name" => $validated["content"]["name"]], $gallery_id);
 
-
-        $galleryRepository->update($validator->validated(),$gallery_id);
-
-        return response()->json([],200);
+        return response()->json([], 200);
     }
 
     /**
@@ -97,12 +94,12 @@ class GalleryController extends Controller
         $gallery->clearMediaCollection();
         $gallery->delete();
 
-        return response()->json([],200);
+        return response()->json([], 200);
     }
 
 
-    protected function toResource($resource)
+    protected function getResource($resource)
     {
-        return (new GalleryResource($resource))->toArray();
+        return new GalleryResource($resource);
     }
 }

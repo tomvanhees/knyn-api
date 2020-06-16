@@ -4,6 +4,8 @@
 namespace App\Traits;
 
 
+use App\Http\Resources\Statistics\StatisticResource;
+
 trait UsesResource
 {
     /**
@@ -18,5 +20,11 @@ trait UsesResource
         });
     }
 
-    abstract protected function toResource($resource);
+
+    protected function toResource($resource)
+    {
+        return ($this->getResource($resource))->toArray();
+    }
+
+    abstract protected function getResource($resource);
 }

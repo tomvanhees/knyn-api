@@ -42,8 +42,8 @@ class ProductCategoryController extends Controller
         return response()->json([],200);
     }
 
-    protected function toResource($category)
+    protected function getResource($category)
     {
-        return (new CategoryResource($category))->toArray();
+        return new CategoryResource($category);
     }
 }

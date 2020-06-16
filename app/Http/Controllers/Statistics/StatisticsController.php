@@ -69,8 +69,8 @@ class StatisticsController extends Controller
         //
     }
 
-    protected function toResource($resource)
+    protected function getResource($resource)
     {
-       return (new StatisticResource($resource))->toArray();
+       return new StatisticResource($resource);
     }
 }
