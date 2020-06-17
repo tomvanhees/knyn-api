@@ -33,16 +33,12 @@ class GalleryMediaController extends Controller
      */
     public function update(Request $request, $gallery_id)
     {
-
-        Log::debug($gallery_id);
-
         $gallery = Gallery::find($gallery_id);
 
 //        $gallery =  Cache::remember(`gallery_${gallery_id}`, now()->addMinutes(2), function () use ($gallery_id){
 //            return Gallery::find($gallery_id);
 //        });
 
-        Log::debug($gallery);
 
         if ($request->hasFile("image")) {
             $mediaItem =   $gallery

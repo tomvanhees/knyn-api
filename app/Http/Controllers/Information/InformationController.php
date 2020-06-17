@@ -58,19 +58,19 @@ class InformationController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-                                            "hours"        => "required",
-                                            "social_media" => "required"
+                                            "content.hours"        => "required",
+                                            "content.social_media" => "required"
                                         ]);
 
         $information = Information::FromAuth()->first();
 
         $information->update([
-                                 "hours"        => $validated["hours"],
-                                 "social_media" => $validated["social_media"]
+                                 "hours"        => $validated['content']["hours"],
+                                 "social_media" => $validated['content']["social_media"]
                              ]);
 
 
-        foreach ($validated["social_media"] as $key => $item) {
+        foreach ($validated['content']["social_media"] as $key => $item) {
             $this->updateSocialMedia($key,$item);
         }
 

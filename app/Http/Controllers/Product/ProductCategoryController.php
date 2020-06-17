@@ -23,11 +23,11 @@ class ProductCategoryController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-                                            "name" => "required|max:191"
+                                            'content.name' => 'required|max:191'
                                         ]);
 
         $category = ProductCategory::create([
-                                                "name"    => $validated["name"],
+                                                "name"    => $validated['content']['name'],
                                                 "user_id" => Auth::id()
                                             ]);
 

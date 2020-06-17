@@ -33,14 +33,14 @@ class QuestionsController extends Controller
     {
 
         $validated = $request->validate([
-                                            "question" => "required",
-                                            "answers"  => "required"
+                                            'content.question' => 'required',
+                                            'content.answers'  => 'required'
                                         ]);
 
         $question = Question::create([
-                                         "user_id"  => Auth::id(),
-                                         "question" => $validated["question"],
-                                         "answers"  => $validated["answers"]
+                                         'user_id'  => Auth::id(),
+                                         'question' => $validated['content']['question'],
+                                         'answers'  => $validated['content']['answers']
                                      ]);
 
         AddStatisticJob::dispatch(Auth::id(), $question);

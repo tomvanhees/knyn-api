@@ -66,16 +66,15 @@ class ProductController extends Controller
      */
     public function update(Request $request, $id)
     {
-        Log::debug($request);
         $validated = $request->validate($this->validationRules());
-        Log::debug($validated);
+
         $product = Product::find($id);
         $product->update([
-            "name" => $validated["data"]['name'],
-            "slug" => Str::slug($validated["data"]['name']),
-            "description" => $validated["data"]['description'],
-            "price" => $validated["data"]['price'],
-            "brand_id" => $validated["data"]["brand"]["0"]['id']
+            "name" => $validated['content']['name'],
+            "slug" => Str::slug($validated['content']['name']),
+            "description" => $validated['content']['description'],
+            "price" => $validated['content']['price'],
+            "brand_id" => $validated['content']['brand']['id']
         ]);
 
         $this->syncCategories($product, $validated);
@@ -100,7 +99,7 @@ class ProductController extends Controller
      */
     private function syncCategories(Product $product, array $validated)
     {
-        $product->categories()->sync(data_get($validated["categories"], "*.id"));
+        $product->categories()->sync(data_get($validated['content']['categories'], '*.id'));
     }
 
     /**
@@ -109,11 +108,11 @@ class ProductController extends Controller
     private function validationRules(): array
     {
         return [
-            "data.name" => "required|max:191",
-            "data.description" => "",
-            "data.brand.id" => "",
-            "data.price" => "max:191",
-            "data.categories" => ""
+            "content.name" => "required|max:191",
+            "content.description" => "",
+            "content.brand.id" => "",
+            "content.price" => "max:191",
+            "content.categories" => ""
         ];
     }
 
