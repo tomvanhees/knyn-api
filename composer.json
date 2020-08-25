@@ -9,6 +9,7 @@
     "license": "MIT",
     "require": {
         "php": "7.4.*",
+        "ext-gd": "*",
         "ext-json": "*",
         "bacon/bacon-qr-code": "^2.0",
         "fideloper/proxy": "^4.2",
@@ -20,7 +21,12 @@
         "laravel/ui": "^2.0",
         "spatie/laravel-medialibrary": "^8.0.0",
         "spatie/laravel-permission": "^3.11",
-      "ext-gd": "*"
+        "tenancy/affects-connections": "^1.0",
+        "tenancy/db-driver-mysql": "^1.0",
+        "tenancy/framework": "^1.0",
+        "tenancy/hooks-database": "^1.0",
+        "tenancy/hooks-migration": "^1.0",
+        "tenancy/identification-driver-http": "^1.0"
     },
     "require-dev": {
         "facade/ignition": "^2.0",

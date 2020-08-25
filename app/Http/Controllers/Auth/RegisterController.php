@@ -2,16 +2,21 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Events\RegisterTenantAdminEvent;
+use App\Events\RegisterTenantEvent;
 use App\Http\Controllers\Controller;
+use App\Models\Tenant;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Response;
 use App\Jobs\GenerateAppTokenQR;
+use Tenancy\Facades\Tenancy;
 
 class RegisterController extends Controller
 {
@@ -53,10 +58,11 @@ class RegisterController extends Controller
      */
     protected function validator(array $data)
     {
-        return Validator::make($data,[
-            'name'     => ['required','string','max:255'],
-            'email'    => ['required','string','email','max:255','unique:users'],
-            'password' => ['required','string'],
+        return Validator::make($data, [
+            'tenant' => ['required', 'string', 'max:199'],
+//            'name' => ['required', 'string', 'max:255'],
+//            'email' => ['required', 'string', 'email', 'max:255'],
+//            'password' => ['required', 'string'],
         ]);
     }
 
@@ -70,13 +76,15 @@ class RegisterController extends Controller
     {
         $this->validator($request->all())->validate();
 
-        event(new Registered($user = $this->create($request->all())));
+        event(new RegisterTenantEvent($request->all()));
+        event(new RegisterTenantAdminEvent($request->all()));
+
 
 //        $this->guard()->login($user);
 
-        if ($response = $this->registered($request,$user)) {
-            return $response;
-        }
+//        if ($response = $this->registered($request,$user)) {
+//            return $response;
+//        }
     }
 
     /**
@@ -86,30 +94,16 @@ class RegisterController extends Controller
      * @param mixed $user
      * @return mixed
      */
-    protected function registered(Request $request,$user)
+    protected function registered(Request $request, $user)
     {
         $adminToken = $user->createToken("admin")->plainTextToken;
-        $appToken   = $user->createToken('app')->plainTextToken;
+        $appToken = $user->createToken('app')->plainTextToken;
 //        $user->createToken('client');
 
-        GenerateAppTokenQR::dispatch($user,$appToken);
+        GenerateAppTokenQR::dispatch($user, $appToken);
 
 
         return $adminToken;
     }
 
-    /**
-     * Create a new user instance after a valid registration.
-     *
-     * @param array $data
-     * @return \App\Models\User
-     */
-    protected function create(array $data)
-    {
-        return User::create([
-                                'name'     => $data['name'],
-                                'email'    => $data['email'],
-                                'password' => Hash::make($data['password']),
-                            ]);
-    }
 }

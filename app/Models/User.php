@@ -8,9 +8,13 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
+
+use Tenancy\Affects\Connections\Support\Traits\OnTenant;
+use Tenancy\Tenant\Events;
+
 class User extends Authenticatable
 {
-    use HasApiTokens,HasRoles, Notifiable;
+    use HasApiTokens,HasRoles, Notifiable, OnTenant;
 
     /**
      * The attributes that are mass assignable.
@@ -39,8 +43,8 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-
     public function QRCodes(){
         return $this->belongsToMany(QrCode::class);
     }
+
 }

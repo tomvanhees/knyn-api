@@ -39,7 +39,7 @@ return [
     |
     */
 
-    'debug' => (bool) env('APP_DEBUG', false),
+    'debug' => (bool)env('APP_DEBUG', false),
 
     /*
     |--------------------------------------------------------------------------
@@ -175,6 +175,16 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
+        Tenancy\Identification\Drivers\Http\Providers\IdentificationProvider::class,
+
+        Tenancy\Affects\Connections\Provider::class,
+
+        Tenancy\Hooks\Migration\Provider::class,
+        Tenancy\Hooks\Database\Provider::class,
+//        Tenancy\Hooks\Hostname\Provider::class,
+
+
+        Tenancy\Database\Drivers\Mysql\Provider::class,
     ],
 
     /*

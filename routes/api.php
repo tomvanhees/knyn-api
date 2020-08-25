@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\RegisterTenantController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Gallery\GalleryController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -27,6 +28,9 @@ use App\Http\Controllers\Feedback\AnswersController;
 */
 
 Route::prefix("v1")->group(function () {
+
+
+    Route::post("/tenant/store",[RegisterTenantController::class, "register"]);
 
     Route::post("/user/store",[RegisterController::class,"register"]);
     Route::post("/user/login",[LoginController::class,"login"]);
