@@ -24,9 +24,15 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::fromAuth()->with("brand", "categories")->get();
+        $products = Product::get();
 
-        return response()->json($this->map($products), 200);
+        $json = [
+            'status' => 200,
+            'data' => $this->map($products)
+        ];
+
+
+        return response()->json($json, 200);
     }
 
     /**
@@ -37,7 +43,7 @@ class ProductController extends Controller
     {
 
         $product = Product::create($this->createProduct($request->all()));
-        $this->syncCategories($product, $request->all());
+//        $this->syncCategories($product, $request->all());
 
         return response()->json([
             "product" => [
@@ -123,12 +129,11 @@ class ProductController extends Controller
     private function createProduct(array $validated): array
     {
         return [
-            "user_id" => Auth::id(),
             "name" => $validated['name'],
             "slug" => Str::slug($validated['name']),
-            "description" => $validated['description'],
-            "brand_id" => $validated['brand_id'],
-            "price" => $validated['price']
+            "description" => $validated['description'] ?? '',
+            "brand_id" => $validated['brand_id'] ?? '',
+            "price" => $validated['price'] ?? ''
         ];
     }
 

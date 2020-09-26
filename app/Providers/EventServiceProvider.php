@@ -7,6 +7,7 @@ use App\Events\RegisterTenantEvent;
 use App\Listeners\ConfigureMigrationsListener;
 use App\Listeners\ConfigureTenantConnectionListener;
 use App\Listeners\ConfigureTenantDatabaseListener;
+use App\Listeners\ConfigureTenantModelsListener;
 use App\Listeners\RegisterTenantAdminListener;
 use App\Listeners\RegisterTenantListener;
 use App\Listeners\ResolveTenantConnectionListener;
@@ -15,6 +16,7 @@ use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Event;
 
+use Tenancy\Affects\Models\Events\ConfigureModels;
 use Tenancy\Hooks\Database\Events\Drivers\Configuring as ConfigureTenantDatabaseEvent;
 use Tenancy\Affects\Connections\Events\Resolving as ResolveTenantConnectionEvent;
 use Tenancy\Affects\Connections\Events\Drivers\Configuring as ConfigureTenantConnectionEvent;
@@ -49,8 +51,10 @@ class EventServiceProvider extends ServiceProvider
         ],
         RegisterTenantAdminEvent::class => [
             RegisterTenantAdminListener::class
+        ],
+        ConfigureModels::class => [
+            ConfigureTenantModelsListener::class
         ]
-
     ];
 
     /**

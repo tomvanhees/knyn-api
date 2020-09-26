@@ -15,7 +15,6 @@ class CreateInformationsTable extends Migration
     {
         Schema::create('informations',function (Blueprint $table) {
             $table->id();
-            $table->bigInteger("user_id");
             $table->longText("hours");
             $table->longText("social_media");
             $table->timestamps();

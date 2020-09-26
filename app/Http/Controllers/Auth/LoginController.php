@@ -52,7 +52,6 @@ class LoginController extends Controller
      */
     protected function authenticated(Request $request,$user)
     {
-
         Log::debug("create Token");
         return $user->createToken("admin")->plainTextToken;
     }

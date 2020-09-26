@@ -182,7 +182,7 @@ return [
         Tenancy\Hooks\Migration\Provider::class,
         Tenancy\Hooks\Database\Provider::class,
 //        Tenancy\Hooks\Hostname\Provider::class,
-
+        Tenancy\Affects\Models\Provider::class,
 
         Tenancy\Database\Drivers\Mysql\Provider::class,
     ],

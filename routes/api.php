@@ -28,16 +28,13 @@ use App\Http\Controllers\Feedback\AnswersController;
 */
 
 Route::prefix("v1")->group(function () {
-
-
     Route::post("/tenant/store",[RegisterTenantController::class, "register"]);
-
     Route::post("/user/store",[RegisterController::class,"register"]);
     Route::post("/user/login",[LoginController::class,"login"]);
     Route::post("/user/logout",[LogoutController::class,"logout"]);
 
 
-    Route::middleware('auth:sanctum')->group(function () {
+//    Route::middleware("auth:sanctum")->group(function () {
         Route::patch("/gallery/{gallery_id}/media",[GalleryMediaController::class,"update"]);
         Route::delete("/gallery/{gallery_id}/media/{media_id}",[GalleryMediaController::class,"destroy"]);
 
@@ -83,5 +80,5 @@ Route::prefix("v1")->group(function () {
         Route::get("/statistics",[StatisticsController::class,"index"]);
 
 
-    });
+//    });
 });

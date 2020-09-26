@@ -8,10 +8,11 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 use App\Traits\UsesAuthScope;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Image\Manipulations;
+use Tenancy\Affects\Connections\Support\Traits\OnTenant;
 
-class Product extends Model implements HasMedia
+class Product extends Model
 {
-    use InteractsWithMedia,UsesAuthScope;
+    use InteractsWithMedia,OnTenant;
 
 
     protected $fillable = ["user_id","name","slug","description","brand_id","price"];

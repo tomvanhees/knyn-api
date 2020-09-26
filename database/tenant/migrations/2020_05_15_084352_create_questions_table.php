@@ -15,7 +15,6 @@ class CreateQuestionsTable extends Migration
     {
         Schema::create('questions',function (Blueprint $table) {
             $table->id();
-            $table->bigInteger("user_id");
             $table->text("question");
             $table->longText("answers");
             $table->boolean("is_active")->default(TRUE);

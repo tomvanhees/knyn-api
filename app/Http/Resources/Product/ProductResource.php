@@ -18,10 +18,10 @@ class ProductResource extends AbstractResource
         $this->collection["slug"]        = $this->data["slug"];
         $this->collection["description"] = $this->data["description"];
         $this->collection["price"]       = $this->data["price"];
-        $this->collection["brand"]       = $this->setBrand();
-        $this->collection["categories"]  = $this->setCategories();
-        $this->collection["media"]       = $this->setMedia();
-        $this->collection["cover"]       = $this->setCover();
+        $this->collection["brand"]       = '';
+//        $this->collection["categories"]  = $this->setCategories();
+//        $this->collection["media"]       = $this->setMedia();
+//        $this->collection["cover"]       = $this->setCover();
     }
 
     private function setBrand()

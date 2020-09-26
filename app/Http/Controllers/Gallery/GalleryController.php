@@ -25,8 +25,7 @@ class GalleryController extends Controller
      */
     public function index()
     {
-        $galleries = Gallery::FromAuth()->get();
-
+        $galleries = Gallery::get();
         return response()->json($this->map($galleries), 200);
     }
 

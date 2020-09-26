@@ -2,16 +2,18 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Tenancy\Identification\Concerns\AllowsTenantIdentification;
 use Tenancy\Identification\Contracts\Tenant as TenantContract;
 use Tenancy\Identification\Drivers\Http\Contracts\IdentifiesByHttp;
 use Tenancy\Tenant\Events;
 
-class Tenant extends Model implements TenantContract
+class Tenant extends Model implements TenantContract, IdentifiesByHttp
 {
-    use AllowsTenantIdentification;
+    use AllowsTenantIdentification, HasFactory;
 
 
     protected $dispatchesEvents = [
@@ -27,12 +29,15 @@ class Tenant extends Model implements TenantContract
      */
     public function getTenantKey()
     {
-        return $this->attributes["path"];
+        Log::debug('tenantkey');
+        return "kap_".$this->attributes["path"];
     }
 
     public function tenantIdentificationByHttp(Request $request): ?Tenant
     {
         list($subdomain) = explode('.', $request->getHost(), 2);
+
+        Log::debug("subdomain: " . $subdomain);
 
         return $this->query()->where("path", $subdomain)->first();
     }

@@ -125,6 +125,8 @@
       <path value="$PROJECT_DIR$/vendor/doctrine/dbal" />
       <path value="$PROJECT_DIR$/vendor/tenancy/hooks-migration" />
       <path value="$PROJECT_DIR$/vendor/tenancy/identification-driver-http" />
+      <path value="$PROJECT_DIR$/vendor/tenancy/affects-models" />
+      <path value="$PROJECT_DIR$/vendor/graham-campbell/result-type" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.4" />
