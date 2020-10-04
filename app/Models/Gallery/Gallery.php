@@ -9,24 +9,27 @@ use Illuminate\Support\Facades\Auth;
 use App\Traits\UsesAuthScope;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Image\Manipulations;
+use Tenancy\Affects\Connections\Support\Traits\OnTenant;
 
 class Gallery extends Model implements HasMedia
 {
-    use InteractsWithMedia,UsesAuthScope;
+    use InteractsWithMedia, UsesAuthScope, OnTenant;
 
-    protected $fillable = ["user_id","name","slug"];
+    protected $fillable = ["user_id", "name", "slug"];
 
 
-    public function registerMediaConversions(Media $media = NULL)
-    : void
+    public function registerMediaConversions(Media $media = NULL): void
     {
         $this
             ->addMediaConversion('cover')
-            ->fit(Manipulations::FIT_CROP,250,250);
-
+            ->fit(Manipulations::FIT_CROP, 200, 200)
+            ->format(Manipulations::FORMAT_PNG)
+            ->background('transparent');
 
         $this
-            ->addMediaConversion("gallery")
-            ->width(250);
+            ->addMediaConversion('gallery')
+            ->fit(Manipulations::FIT_FILL,200,200)
+            ->format(Manipulations::FORMAT_PNG)
+            ->background('transparent');;
     }
 }

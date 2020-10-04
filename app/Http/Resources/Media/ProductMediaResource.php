@@ -6,28 +6,13 @@ namespace App\Http\Resources\Media;
 
 use App\Http\Resources\AbstractResource;
 
-class ProductMediaResource extends AbstractResource
+class ProductMediaResource extends MediaItemResource
 {
-
-    protected function process()
+    function getPath(): string
     {
-        $this->collection["id"]      = $this->data->id;
-        $this->collection["name"]    = $this->data->name;
-        $this->collection["thumb"]   = $this->getThumb();
-        $this->collection['display'] = $this->getDisplay();
-        $this->collection['order']   = $this->data->order_column;
+        if ($this->data->hasGeneratedConversion("gallery")) {
+            return $this->data->getFullUrl("gallery");
+        }
+        return $this->data->getFullUrl();
     }
-
-    public function getThumb()
-    : string
-    {
-        return $this->data->getFullUrl("thumb");
-    }
-
-    public function getDisplay()
-    : string
-    {
-        return $this->data->getFullUrl("display");
-    }
-
 }

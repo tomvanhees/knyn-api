@@ -5,8 +5,13 @@ namespace App\Http\Controllers\Auth;
 use App\Events\RegisterTenantAdminEvent;
 use App\Events\RegisterTenantEvent;
 use App\Http\Controllers\Controller;
+use App\Models\Tenant;
+use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Tenancy\Facades\Tenancy;
 
 class RegisterTenantController extends Controller
 {
@@ -20,9 +25,9 @@ class RegisterTenantController extends Controller
     {
         return Validator::make($data, [
             'tenant' => ['required', 'string', 'max:199'],
-//            'name' => ['required', 'string', 'max:255'],
-//            'email' => ['required', 'string', 'email', 'max:255'],
-//            'password' => ['required', 'string'],
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255'],
+            'password' => ['required', 'string'],
         ]);
     }
 
@@ -36,10 +41,23 @@ class RegisterTenantController extends Controller
     {
         $this->validator($request->all())->validate();
 
-        event(new RegisterTenantEvent($request->all()));
-        event(new RegisterTenantAdminEvent($request->all()));
+        $tenant = Tenant::create([
+            'path' => $request->tenant
+        ]);
+
+        Tenancy::setTenant($tenant);
+
+        User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password)
+        ]);
 
 
-        return response()->json(["redirect_path" => "https://".$request->tenant.".kapsalon-api.test/admin"], 200);
+        $response = new JsonResponse([
+            'redirect_path' => 'https://' . $request->tenant . '.kapsalon-api.test/admin'
+        ], 200);
+
+        return response()->json($response, 200);
     }
 }

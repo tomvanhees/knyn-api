@@ -4,14 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\UsesAuthScope;
+use Tenancy\Affects\Connections\Support\Traits\OnTenant;
 
 class Information extends Model
 {
-    use UsesAuthScope;
+    use UsesAuthScope, OnTenant;
 
     protected $table = "informations";
 
-    protected $fillable = ["user_id","hours","social_media"];
+    protected $fillable = ["hours","social_media"];
 
     protected $casts = [
         "hours"        => "array",

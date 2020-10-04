@@ -15,12 +15,18 @@ class Tenant extends Model implements TenantContract, IdentifiesByHttp
 {
     use AllowsTenantIdentification, HasFactory;
 
+    protected $fillable = ['path'];
 
     protected $dispatchesEvents = [
         'created' => Events\Created::class,
         'updated' => Events\Updated::class,
         'deleted' => Events\Deleted::class,
     ];
+
+    public function getTenantName(): string
+    {
+        return $this->attributes["path"];
+    }
 
     /**
      * The actual value of the key for the tenant Model.
@@ -29,16 +35,12 @@ class Tenant extends Model implements TenantContract, IdentifiesByHttp
      */
     public function getTenantKey()
     {
-        Log::debug('tenantkey');
-        return "kap_".$this->attributes["path"];
+        return "knyn_" . $this->getTenantName();
     }
 
     public function tenantIdentificationByHttp(Request $request): ?Tenant
     {
         list($subdomain) = explode('.', $request->getHost(), 2);
-
-        Log::debug("subdomain: " . $subdomain);
-
         return $this->query()->where("path", $subdomain)->first();
     }
 

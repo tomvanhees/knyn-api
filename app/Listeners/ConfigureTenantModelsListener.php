@@ -2,18 +2,16 @@
 
 namespace App\Listeners;
 
-use App\Models\Product\Product;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Support\Facades\Log;
 use Laravel\Sanctum\PersonalAccessToken;
 use Tenancy\Affects\Models\Events\ConfigureModels;
 use Tenancy\Facades\Tenancy;
 
 class ConfigureTenantModelsListener
 {
-    protected $model = Product::class;
+    /**
+     * @var string
+     */
+    protected $model =  PersonalAccessToken::class;
 
     /**
      * Create the event listener.
@@ -33,8 +31,12 @@ class ConfigureTenantModelsListener
      */
     public function handle(ConfigureModels $event)
     {
+        $tenant = Tenancy::getTenant();
+
         if ($event->event->tenant) {
-            $event->setConnection($this->model, Tenancy::getTenantConnectionName());
+            $event->setConnection($this->model, $tenant->getTenantKey());
+
+            $event->getConnectionName($this->model,$tenant->getTenantKey());
         }
     }
 }

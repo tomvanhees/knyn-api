@@ -1,17 +1,23 @@
 <?php
 
-
 namespace App\Http\Resources\Product;
 
+use Illuminate\Http\Resources\Json\JsonResource;
 
-use App\Http\Resources\AbstractResource;
-
-class CategoryResource extends AbstractResource
+class CategoryResource extends JsonResource
 {
-
-    protected function process()
+    public static $wrap = 'content';
+    /**
+     * Transform the resource into an array.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return array
+     */
+    public function toArray($request)
     {
-        $this->collection["id"] = $this->data->id;
-        $this->collection["name"] = $this->data->name;
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+        ];
     }
 }

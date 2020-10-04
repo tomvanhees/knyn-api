@@ -3,13 +3,15 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
+use Tenancy\Facades\Tenancy;
 
 class LoginController extends Controller
 {
@@ -44,19 +46,6 @@ class LoginController extends Controller
     }
 
     /**
-     * The user has been authenticated.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @param mixed $user
-     * @return mixed
-     */
-    protected function authenticated(Request $request,$user)
-    {
-        Log::debug("create Token");
-        return $user->createToken("admin")->plainTextToken;
-    }
-
-    /**
      * Handle a login request to the application.
      *
      * @param \Illuminate\Http\Request $request
@@ -66,27 +55,21 @@ class LoginController extends Controller
      */
     public function login(Request $request)
     {
-        Log::debug("login");
-
         $this->validateLogin($request);
-
-        Log::debug("Login validated");
 
         // If the class is using the ThrottlesLogins trait, we can automatically throttle
         // the login attempts for this application. We'll key this by the username and
         // the IP address of the client making these requests into this application.
-        if (method_exists($this,'hasTooManyLoginAttempts') &&
+        if (method_exists($this, 'hasTooManyLoginAttempts') &&
             $this->hasTooManyLoginAttempts($request)) {
             $this->fireLockoutEvent($request);
 
             return $this->sendLockoutResponse($request);
         }
 
+        $user = User::where('email', $request->email)->firstOrFail();
 
-        Log::debug("Before attempt login");
-        $user = $this->attemptLogin($request);
-
-        if ($user) {
+        if ($this->attemptLogin($request, $user)) {
             return $this->sendLoginResponse($request,$user);
         }
 
@@ -103,39 +86,46 @@ class LoginController extends Controller
      * Attempt to log the user into the application.
      *
      * @param \Illuminate\Http\Request $request
-     * @return User|bool
+     * @param User $user
+     * @return bool
      */
-    protected function attemptLogin(Request $request)
+    protected function attemptLogin(Request $request, User $user)
     {
-
-        $user = User::where("email",$request->email)->first();
-
-        if (isset($user)){
-            if (Hash::check($request->password,$user->password)) {
-                return $user;
-            }
-        }
-
-        return FALSE;
+        return Hash::check($request->password, $user->password);
     }
-
 
     /**
      * Send the response after the user was authenticated.
      *
      * @param \Illuminate\Http\Request $request
      * @param User $user
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
      */
-    protected function sendLoginResponse(Request $request,User $user)
+    protected function sendLoginResponse(Request $request, User $user)
     {
-//        $request->session()->regenerate();
-
         $this->clearLoginAttempts($request);
 
-        return $this->authenticated($request,$user);
+        if ($response = $this->authenticated($request, $user)) {
+            return $response;
+        }
 
-
+        return $request->wantsJson()
+            ? new JsonResponse([], 204)
+            : redirect()->intended($this->redirectPath());
     }
 
+    /**
+     * The user has been authenticated.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param User $user
+     * @return JsonResponse
+     */
+    protected function authenticated(Request $request,User $user)
+    {
+        $token = $user->createToken('admin');
+        return new JsonResponse([
+            'token' => $token->plainTextToken
+        ], 200);
+    }
 }

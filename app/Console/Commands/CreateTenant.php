@@ -3,7 +3,10 @@
 namespace App\Console\Commands;
 
 use App\Models\Tenant;
+use App\Models\User;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Hash;
+use Tenancy\Facades\Tenancy;
 
 class CreateTenant extends Command
 {
@@ -38,6 +41,16 @@ class CreateTenant extends Command
      */
     public function handle()
     {
-        Tenant::factory()->create();
+        $tenant = Tenant::create([
+            'path' => 'tomvanhees'
+        ]);
+
+        Tenancy::setTenant($tenant);
+
+        User::create([
+            'name' => 'tom vanhees',
+            'email' => 'tom@datalink.be',
+            'password' => Hash::make('tom123')
+        ]);
     }
 }

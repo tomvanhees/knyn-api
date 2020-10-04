@@ -14,7 +14,7 @@ use Tenancy\Tenant\Events;
 
 class User extends Authenticatable
 {
-    use Notifiable, HasApiTokens, HasRoles, OnTenant;
+    use OnTenant,HasApiTokens;
 
     /**
      * The attributes that are mass assignable.

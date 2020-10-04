@@ -13,15 +13,18 @@ trait UsesResource
      * @param $collection
      * @return mixed
      */
-    protected function map($collection)
+    protected function mapToResource($collection)
     {
         return $collection->map(function ($item) {
             return $this->toResource($item);
         });
     }
 
-
-    protected function toResource($resource)
+    /**
+     * @param $resource
+     * @return array
+     */
+    protected function toResource($resource): array
     {
         return ($this->getResource($resource))->toArray();
     }

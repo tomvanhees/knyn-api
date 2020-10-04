@@ -1,20 +1,33 @@
 <?php
 
-
 namespace App\Http\Resources\Media;
 
+use Illuminate\Http\Resources\Json\JsonResource;
 
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Log;
-
-class GalleryMediaResource extends MediaItemResource
+class GalleryMediaResource extends JsonResource
 {
-    public function getPath()
-    : string
+    /**
+     * Transform the resource into an array.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return array
+     */
+    public function toArray($request)
     {
-        if ($this->data->hasGeneratedConversion("gallery")) {
-           return $this->data->getFullUrl("gallery");
+        return [
+            "id" => $this->id,
+            "name" => $this->name,
+            "path" => $this->getPath(),
+            'order' => $this->order_column,
+        ];
+    }
+
+
+    private function getPath(): string
+    {
+        if ($this->hasGeneratedConversion("gallery")) {
+            return $this->getFullUrl("gallery");
         }
-        return $this->data->getFullUrl();
+        return $this->getFullUrl();
     }
 }

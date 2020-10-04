@@ -4,18 +4,24 @@
 namespace App\Classes;
 
 
+use Illuminate\Support\Str;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\MediaLibrary\Support\PathGenerator\PathGenerator;
 use Illuminate\Support\Facades\Auth;
+use Tenancy\Facades\Tenancy;
 
 class OwnPathGenerator implements PathGenerator
 {
+    private function getTenantSlug():string{
+        return Str::slug((Tenancy::getTenant())->getTenantName());
+    }
+
     /*
      * Get the path for the given media, relative to the root storage path.
      */
     public function getPath(Media $media): string
     {
-        return Auth::id().'/'.$this->getBasePath($media).'/';
+        return $this->getTenantSlug().'/'.$this->getBasePath($media).'/';
     }
 
     /*
@@ -23,7 +29,7 @@ class OwnPathGenerator implements PathGenerator
      */
     public function getPathForConversions(Media $media): string
     {
-        return Auth::id().'/'.$this->getBasePath($media).'/conversions/';
+        return $this->getTenantSlug().'/'.$this->getBasePath($media).'/conversions/';
     }
 
     /*
@@ -31,7 +37,7 @@ class OwnPathGenerator implements PathGenerator
      */
     public function getPathForResponsiveImages(Media $media): string
     {
-        return Auth::id().'/'.$this->getBasePath($media).'/responsive-images/';
+        return $this->getTenantSlug().'/'.$this->getBasePath($media).'/responsive-images/';
     }
 
     /*

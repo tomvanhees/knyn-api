@@ -1,58 +1,34 @@
 <?php
 
-
 namespace App\Http\Resources\Product;
 
+use App\Traits\HasCover;
+use Illuminate\Http\Resources\Json\JsonResource;
 
-use App\Http\Resources\AbstractResource;
-use App\Http\Resources\Media\MediaItemResource;
-use App\Http\Resources\Media\ProductMediaResource;
-
-class ProductResource extends AbstractResource
+class ProductResource extends JsonResource
 {
+    use HasCover;
 
-    protected function process()
+    public static $wrap = 'content';
+
+    /**
+     * Transform the resource into an array.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return array
+     */
+    public function toArray($request)
     {
-        $this->collection["id"]          = $this->data["id"];
-        $this->collection["name"]        = $this->data["name"];
-        $this->collection["slug"]        = $this->data["slug"];
-        $this->collection["description"] = $this->data["description"];
-        $this->collection["price"]       = $this->data["price"];
-        $this->collection["brand"]       = '';
-//        $this->collection["categories"]  = $this->setCategories();
-//        $this->collection["media"]       = $this->setMedia();
-//        $this->collection["cover"]       = $this->setCover();
-    }
-
-    private function setBrand()
-    {
-        return (new BrandResource($this->data->brand))->toArray();
-    }
-
-    private function setCategories()
-    {
-        $categories = [];
-
-        foreach ($this->data->categories as $category) {
-            $categories[] = (new CategoryResource($category))->toArray();
-        }
-
-        return $categories;
-    }
-
-    private function setMedia()
-    {
-        $items = [];
-        $media = $this->data->getMedia();
-
-        foreach ($media as $item) {
-            $items[] = (new ProductMediaResource($item))->toArray();
-        }
-        return $items;
-    }
-
-    private function setCover()
-    {
-        return $this->data->getFirstMediaUrl("default", "cover");
+        return [
+            "id" => $this->id,
+            "name" => $this->name,
+            "slug" => $this->slug,
+            "description" => $this->description,
+            "price" => $this->price,
+            "brand" => new BrandResource($this->brand),
+            "categories" => CategoryResource::collection($this->categories),
+            "media" => [],
+            "cover" => $this->getCover(),
+        ];
     }
 }

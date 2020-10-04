@@ -12,25 +12,8 @@ class AnswerResource extends AbstractResource
 
     protected function process()
     {
-
-        foreach ($this->data as $data) {
-            $this->collection[$data["id"]] =  $this->processAnswers($data["answer"]);
-        }
+        $this->collection['id'] = $this->data->id;
+        $this->collection['answer'] = $this->data->answer;
     }
 
-
-    private function processAnswers(array $answers)
-    {
-        $formattedAnswers = [];
-
-        foreach ($answers as $answer) {
-            $formattedAnswers[] = [
-                "question" => $answer["question"],
-                "answer"   => $answer["answer"]
-            ];
-        }
-
-
-        return $formattedAnswers;
-    }
 }

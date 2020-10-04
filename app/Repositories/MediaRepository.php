@@ -2,11 +2,11 @@
 
 
 namespace App\Repositories;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use App\Classes\SpatieMediaWrapper;
 
 class MediaRepository
 {
     public function destroy($id){
-        Media::find($id)->delete();
+        SpatieMediaWrapper::find($id)->delete();
     }
 }

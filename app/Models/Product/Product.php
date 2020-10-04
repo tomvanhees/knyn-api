@@ -10,13 +10,9 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Image\Manipulations;
 use Tenancy\Affects\Connections\Support\Traits\OnTenant;
 
-class Product extends Model
+class Product extends Model implements HasMedia
 {
     use InteractsWithMedia,OnTenant;
-
-
-    protected $fillable = ["user_id","name","slug","description","brand_id","price"];
-
 
 
     public function registerMediaConversions(Media $media = NULL)
@@ -24,20 +20,18 @@ class Product extends Model
     {
         $this
             ->addMediaConversion('cover')
-            ->fit(Manipulations::FIT_CROP,250,250);
+            ->fit(Manipulations::FIT_CROP, 200, 200)
+            ->format(Manipulations::FORMAT_PNG)
+            ->background('transparent');
 
         $this
-            ->addMediaConversion('thumb')
-            ->fit(Manipulations::FIT_CROP,50,50);
-
-        $this
-            ->addMediaConversion('display')
-            ->fit(Manipulations::FIT_FILL,500,500);
+            ->addMediaConversion('gallery')
+            ->fit(Manipulations::FIT_FILL,200,200)
+            ->format(Manipulations::FORMAT_PNG)
+            ->background('transparent');;
 
 
     }
-
-
 
     public function brand()
     {

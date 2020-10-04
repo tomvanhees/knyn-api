@@ -24,11 +24,11 @@ class ProductRequest extends FormRequest
     public function rules()
     {
         return [
-            "name"        => "required|max:191",
-            "description" => "",
-            "brand_id"    => "",
-            "price"       => "max:191",
-            "categories"  => ""
+            "content.name" => "required|max:191",
+            "content.description" => "",
+            "content.brand" => "",
+            "content.price" => "max:191",
+            "content.categories" => ""
         ];
     }
 }

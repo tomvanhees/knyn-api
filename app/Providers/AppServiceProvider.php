@@ -3,7 +3,10 @@
 namespace App\Providers;
 
 use App\Models\Tenant;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Sanctum\PersonalAccessToken;
+use Laravel\Sanctum\Sanctum;
 use Tenancy\Identification\Contracts\ResolvesTenants;
 
 class AppServiceProvider extends ServiceProvider
@@ -15,11 +18,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-
-        $this->app->resolving(ResolvesTenants::class, function (ResolvesTenants $resolver){
+        Sanctum::ignoreMigrations();
+        $this->app->resolving(ResolvesTenants::class, function (ResolvesTenants $resolver) {
             $resolver->addModel(Tenant::class);
             return $resolver;
         });
+
 
     }
 
@@ -30,6 +34,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        Sanctum::usePersonalAccessTokenModel(\App\Classes\PersonalAccessToken::class);
+        JsonResource::withoutWrapping();
     }
 }

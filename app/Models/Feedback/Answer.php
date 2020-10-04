@@ -4,15 +4,12 @@ namespace App\Models\Feedback;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\UsesAuthScope;
+use Tenancy\Affects\Connections\Support\Traits\OnTenant;
 
 class Answer extends Model
 {
-    use UsesAuthScope;
+    use UsesAuthScope, OnTenant;
 
+    protected $fillable = ["question_id", "answer"];
 
-    protected $fillable = ["user_id","answer"];
-
-    protected $casts = [
-        "answer" => "array"
-    ];
 }

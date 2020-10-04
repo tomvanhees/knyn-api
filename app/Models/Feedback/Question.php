@@ -4,14 +4,20 @@ namespace App\Models\Feedback;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\UsesAuthScope;
+use Tenancy\Affects\Connections\Support\Traits\OnTenant;
 
 class Question extends Model
 {
-    use UsesAuthScope;
+    use UsesAuthScope, OnTenant;
 
-    protected $fillable = ["user_id","question","answers"];
+    protected $fillable = ["question", "is_active"];
 
     protected $casts = [
-        "answers" => "array"
+        "is_active" => "bool"
     ];
+
+    public function answers(){
+        return $this->hasMany(Answer::class);
+    }
+
 }
